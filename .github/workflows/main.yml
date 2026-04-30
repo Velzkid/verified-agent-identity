@@ -16,7 +16,5 @@ jobs:
           node-version: '20'
       - run: npx clawhub@latest install verified-agent-identity
       - run: cd scripts && npm install
-      - name: Setup DID
-        run: echo '{"agentDid":"did:iden3:billions:main:2VmAkXrihYaL41fDjxST62kncGXFcjC63PTdn1tLUh"}' > agent-config.json
-      - name: Link Agent
-        run: node scripts/manualLinkHumanToAgent.js --challenge "{\"name\":\"${{ github.event.inputs.agent_name }}\"}"
+      - name: Link Agent to DID Lama
+        run: node scripts/manualLinkHumanToAgent.js --agentDid "did:iden3:billions:main:2VmAkXrihYaL41fDjxST62kncGXFcjC63PTdn1tLUh" --challenge "{\"name\": \"${{ github.event.inputs.agent_name }}\"}"
