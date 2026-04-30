@@ -6,6 +6,8 @@ on:
         description: Agent name
         required: true
         default: Velzkid
+  push:
+    branches: [develop]
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -16,4 +18,7 @@ jobs:
           node-version: '20'
       - run: npx clawhub@latest install verified-agent-identity
       - run: cd scripts && npm install
-      - run: node scripts/manualLinkHumanToAgent.js --agentDid "did:iden3:billions:main:2VmAkXrihYaL41fDjxST62kncGXFcjC63PTdn1tLUh" --challenge "{\"name\": \"${{ inputs.agent_name }}\"}"
+      - run: |
+          node scripts/manualLinkHumanToAgent.js \
+          --agentDid "did:iden3:billions:main:2VmAkXrihYaL41fDjxST62kncGXFcjC63PTdn1tLUh" \
+          --challenge '{"name": "${{ inputs.agent_name }}"}'
