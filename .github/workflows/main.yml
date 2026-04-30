@@ -3,18 +3,27 @@ on:
   workflow_dispatch:
     inputs:
       agent_name:
-        description: 'Agent name'
+        description: Agent name
         required: true
-        default: 'Velzkid'
+        default: Velzkid
+
 jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: '20'
-      - run: npx clawhub@latest install verified-agent-identity
-      - run: cd scripts && npm install
-      - name: Link Agent to DID Lama
-        run: node scripts/manualLinkHumanToAgent.js --agentDid "did:iden3:billions:main:2VmAkXrihYaL41fDjxST62kncGXFcjC63PTdn1tLUh" --challenge "{\"name\": \"${{ github.event.inputs.agent_name }}\"}"
+      
+      - name: Install ClawHub skill
+        run: npx clawhub@latest install verified-agent-identity
+      
+      - name: Install script dependencies
+        run: cd scripts && npm install
+      
+      - name: Link Agent to Existing DID
+        run: node scripts/manualLinkHumanToAgent.js --agentDid "did:iden3:billions:main:2VmAkXrihYaL41fDjxST62kncGXFcjC63PTdn1tLUh" --challenge "{\"name\": \"${{ inputs.agent_name }}\"}"
