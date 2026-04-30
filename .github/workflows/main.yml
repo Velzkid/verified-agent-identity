@@ -1,40 +1,24 @@
 name: Verify Human Identity
-
 on:
   workflow_dispatch:
     inputs:
       agent_name:
-        description: 'Velzkid'
+        description: 'Nama agent'
         required: true
         default: 'Velzkid'
-      agent_description:
-        description: 'Velzkid'
-        required: true
-        default: 'Velzkid AI Agent'
 
 jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: '20'
-
-      - name: Step 1 - Install ClawHub skill
-        run: npx clawhub@latest install verified-agent-identity
-
-      - name: Install script dependencies
+      - run: npx clawhub@latest install verified-agent-identity
+      - run: cd scripts && npm install
+      - name: Setup DID
         run: |
-          cd scripts
-          npm install
-
-      - name: Step 2 - Setup DID Lama Kamu
-        run: echo '{"agentDid": "did:iden3:billions:main:2VmAkXrihYaL41fDjxST62kncGXFcjC63PTdn1tLUh"}' > agent-config.json
-
-      - name: Step 3 - Link Human to Agent + Kasih Nama
-        run: |
-          node scripts/manualLinkHumanToAgent.js --challenge '{"name": "${{ github.event.inputs.agent_name }}", "description": "${{ github.event.inputs.agent_description }}"}'
+          echo '{ "agentDid": "did:iden3:billions:main:2VmAkXrihYaL41fDjxST62kncGXFcjC63PTdn1tLUh" }' > agent-config.json
+      - name: Link Agent
+        run: node scripts/manualLinkHumanToAgent.js --challenge "{\"name\": \"${{ github.event.inputs.agent_name }}\"}"
